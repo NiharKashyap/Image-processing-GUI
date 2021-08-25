@@ -59,9 +59,12 @@ def Imgback():
 	Simage = st.empty()
 
 	if uploaded_file is not None:
-		
+
 	  	my_img = Image.open(uploaded_file)
 	  	frame = np.array(my_img)
+	  	print(uploaded_file.name)
+	  	orig=cv2.imread(uploaded_file.read())
+	  	cv2.imwrite('orig.jpg', orig)
 	  	frame = cv2.resize(frame, (640, 480))
 
 	  	ss.rem(frame, filepath,thresh)
@@ -70,8 +73,7 @@ def Imgback():
 	  	imgS = Image.open('imgS.jpg')
 	  	Oimage.image(imgO)
 	  	Simage.image(imgS)
-	  	# image = Image.open(uploaded_file)
-	  	# st.image(image)
+	
 
 
 
