@@ -11,8 +11,8 @@ def rem(frame, path, threshold):
     img = cv2.imread(path)
     
     imgOut = segmentor.removeBG(frame, img, threshold)
-    cv2.imwrite('imgO.jpg', imgOut)
-    cv2.imwrite('imgS.jpg', frame)
+    cv2.imwrite('imgO.jpg', frame)
+    cv2.imwrite('imgS.jpg', imgOut)
     #imgStack = cvzone.stackImages([frame, imgOut], 2,1)
     #_, imgStack = fpsReader.update(imgStack)
     #cv2.imwrite('img.jpg', imgStack)

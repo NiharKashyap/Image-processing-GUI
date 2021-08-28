@@ -3,6 +3,7 @@ import streamlit as st
 from PIL import Image
 import selfieSeg as ss
 import numpy as np
+import os
 
 choice = st.sidebar.selectbox('Select Your Application', 
 	('Image background Removal','Live background Removal','Background3'))
@@ -55,25 +56,26 @@ def Imgback():
 
 	uploaded_file = st.file_uploader("Choose a Image file")
 
-	Oimage = st.empty()
-	Simage = st.empty()
+
+	Oimage, Simage = st.columns(2)
 
 	if uploaded_file is not None:
+		with open(os.path.join("tempDir",uploaded_file.name),"wb") as f: 
+			f.write(uploaded_file.getbuffer())
+		my_img = cv2.imread('tempDir/' + uploaded_file.name)
+		#my_img = Image.open(uploaded_file)
+		frame = np.array(my_img)
+		frame = cv2.resize(frame, (640, 480))
 
-	  	my_img = Image.open(uploaded_file)
-	  	frame = np.array(my_img)
-	  	print(uploaded_file.name)
-	  	orig=cv2.imread(uploaded_file.read())
-	  	cv2.imwrite('orig.jpg', orig)
-	  	frame = cv2.resize(frame, (640, 480))
+		ss.rem(frame, filepath,thresh)
+		imageLocation = st.empty()
+		imgO = Image.open('imgO.jpg')
+		imgS = Image.open('imgS.jpg')
+		Oimage.image(imgO, use_column_width=True)
+		Oimage.header("Original")
+		Simage.image(imgS, use_column_width=True)
+		Simage.header("Processed")
 
-	  	ss.rem(frame, filepath,thresh)
-	  	imageLocation = st.empty()
-	  	imgO = Image.open('imgO.jpg')
-	  	imgS = Image.open('imgS.jpg')
-	  	Oimage.image(imgO)
-	  	Simage.image(imgS)
-	
 
 
 
