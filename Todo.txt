@@ -1,0 +1,7 @@
+In problem statement - Various Image enhancement funxtions, segmentation functions and morphological operations.. Specify which are thr functions u will include
+
+For example..
+Image enhancement - 
+brightness enhancement, 
+contrast enhancement, 
+noise reduction, etc
