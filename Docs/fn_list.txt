@@ -1,0 +1,31 @@
+skimage
+
+1. Color conversion
+2. Contrast and exposure
+3. Cropping, resizing and rescaling images
+4. Geometric transforms
+5. Feature detection
+6. Image Segmentation: Edge-based segmentation, Region-based segmentation
+
+PIL:
+
+1. BLUR
+2. CONTOUR
+3. DETAIL
+4. EDGE_ENHANCE
+6. FIND_EDGES
+7. SHARPEN
+8. SMOOTH
+
+opencv:
+
+1. Changing colorspaces
+2. Thresholding
+3. Smoothing
+4. Morphological transformations
+5. Find gradients, edges
+6. Canny edge detection
+7. Image histograms
+8. Contours detection
+9. Template matching
+10. Grabcut: foreground extract

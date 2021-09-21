@@ -1,0 +1,105 @@
+These are some methods you should implement
+
+All are of only 4/5 lines of codes you will find in cv2
+
+Make sure that user can input different parameters for all these methods
+For example - filter size for denoising operations, threhold value for thresholding, etc etc
+
+Implement some morphological operations also with differernt kerenel size
+
+Image Pre-Processing
+---------------------
+1. Denoising
+	i. Image bluring
+
+
+	
+	ii. Mean Filter
+
+		blur = cv2.blur(img,(5,5))
+	
+	iii. Gaussian Filter
+	
+		median = cv2.medianBlur(img, 5)
+		gauss = cv2.GaussianBlur(img, (5,5), 0)
+		images = np.concatenate((median, gauss), axis=1)
+		cv2.imshow('img', images)
+
+	iv. Median Filter 
+
+		img = cv2.imread('brain.jpg')
+		median = cv2.medianBlur(img, 5)
+		compare = np.concatenate((img, median), axis=1) #side by side comparison
+
+	v. Laplacian Filter
+
+		cv2.bilateralFilter(img, 21,51,51) [Laplacian not found]
+	
+	vi. Non-Local means 
+
+		cv2.fastNlMeansDenoisingColored(src[, dst[, h[, hColor[, templateWindowSize[, searchWindowSize]]]]])
+
+2. Contrast Enhancement
+	
+	i. Histogram equlization
+
+		equ = cv2.equalizeHist(img)
+
+	ii. Adaptive Histogram Equlization (CLAHE)
+
+		clahe=cv2.createCLAHE(clipLimit=40)
+		gray_img_clahe=clahe.apply(gray_img_eqhist)
+		gray_img1_clahe=clahe.apply(gray_img1_eqhist)
+		images=np.concatenate((gray_img_clahe,gray_img1_clahe),axis=1)
+		cv2.imshow("Images",images)
+		cv2.waitKey(0)
+		cv2.destroyAllWindows()
+
+	iii. Min-Max Contrast Stretching
+
+3. Brightness Enhancement
+
+4. Image Sharpness enhancement
+
+************************************************************************************
+Image Segmentation
+-------------------
+1. Global Thresholding
+	
+	cv2.threshold()
+
+
+2. Local Thresholding
+
+3. Adaptive Thresholding
+	
+	cv2.adapativeThreshold()
+
+4. Otsu's Thresholding
+
+	ret,thresh1 = cv2.threshold(gray_image,0, 255,  cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+
+5. Edge detection
+	i. Canny
+	ii. Sobel
+	iii. Prewitt
+	iv. LoG
+	v. Roberts
+
+6. Region based Segmentation 
+
+7. Watershed based Segmentation 
+
+8. Active Contour model based Segmentation
+
+9. Random walker segmentation
+
+10. Clsuter based segmentation 
+	i. k-means
+	ii. other clustering algorithms
+
+************************************************************************************
+Regular shaped object segmentstion
+
+1. Circular Hough Transformation *
+2. Elliptical Hough Transformation *
