@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 from skimage import filters
 from skimage import color
+from skimage.segmentation import active_contour
+from skimage.color import rgb2gray
+from skimage.filters import gaussian
+
 
 def save(image,new_image):
 	cv2.imwrite('imgO.jpg', image)
@@ -142,8 +146,28 @@ def WatershedSegmentation(image, threshVal):
     #cv2.imwrite("new.jpg", 255*img2)
     save(image, 255*img2)
 
+def circle_points(resolution, center, radius):
+    """
+    Generate points which define a circle on an image.Centre refers to the centre of the circle
+    """   
+    radians = np.linspace(0, 2*np.pi, resolution)
+    c = center[1] + radius*np.cos(radians)#polar co-ordinates
+    r = center[0] + radius*np.sin(radians)
+    
+    return np.array([c, r]).T
+
+def ActiveContour(image, resolution, center, radius):
+	#points = circle_points(resolution, [80, 250], 80)[:-1]
+	pass
+
 def RandomWalk(image):
     #random_walker (data,labels,beta: int=130,mode: str=str,tol: float=0.001,copy: bool=True,multichannel: bool=False,return_full_prob: bool=False,spacing: __class__=None)
-    pass
+	image = rgb2gray(image)
+	s = np.linspace(0, 2*np.pi, 400)
+	r = 100 + 100*np.sin(s)
+	c = 220 + 100*np.cos(s)
+	init = np.array([r, c]).T
+	snake = active_contour(gaussian(image, 3, preserve_range=False), init, alpha=0.015, beta=10, gamma=0.001)
+	save(image, snake)
 
 

@@ -209,6 +209,11 @@ def paintActive():
 
 def paintRandomWalk():
 	st.title('Random walker segmentation')
+	frame = preProcess(uploaded_file)
+	if frame is not None:
+		ip.RandomWalk(frame)
+		paintImage()
+
 
 def paintCluster():
 	st.title('Cluster based segmentation')
