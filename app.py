@@ -36,6 +36,14 @@ def preProcess(uploaded_file):
 		frame = cv2.resize(frame, (640, 480))
 		return frame
 
+def preProcessRegion(uploaded_file):
+	if uploaded_file is not None:
+		with open(os.path.join("tempDir",uploaded_file.name),"wb") as f: 
+			f.write(uploaded_file.getbuffer())
+		
+	return uploaded_file.name
+    	
+
 def paintImage():
 	imgO = Image.open('imgO.jpg')
 	imgS = Image.open('imgS.jpg')
@@ -146,17 +154,54 @@ def paintThresh():
 			ip.globalThresh(frame, thresh, maxVal)
 			paintImage()
 
+	elif choice=='Adaptive':
+		maxVal = st.sidebar.slider('Max Value', 0, 100, 127, help='We travel through the image with this filter by applying the desired operation.')
+		
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.adaptiveThresh(frame, maxVal)
+			paintImage()
+
+	elif choice=='Otsu':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.otsuThresh(frame)
+			paintImage()
+
+
 
 def paintEdge():
 	st.title('Edge Detection')
 	choice = st.sidebar.selectbox('Select Algorithm', ('Canny', 
 		'Sobel', 'Prewitt', 'LoG', 'Roberts'))
 
+	if choice=='Canny':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.cannyEdge(frame)
+			paintImage()
+
+	elif choice=='Sobel':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.sobelEdge(frame)
+			paintImage()
+
 def paintReg():
 	st.title('Region based Segmentation')
+	frame = preProcess(uploaded_file)
+	if frame is not None:
+		ip.RegionSegmentation(frame)
+		paintImage()
+
 
 def paintWater():
 	st.title('Watershed based Segmentation')
+	thresh = st.sidebar.slider('Threshold Value', 0.0, 0.2, 1.0, help='We travel through the image with this filter by applying the desired operation.')
+	frame = preProcess(uploaded_file)
+	if frame is not None:
+		ip.WatershedSegmentation(frame, thresh)
+		paintImage()
 
 
 def paintActive():
