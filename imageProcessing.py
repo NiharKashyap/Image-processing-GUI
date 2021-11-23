@@ -5,6 +5,10 @@ from skimage import color
 from skimage.segmentation import active_contour
 from skimage.color import rgb2gray
 from skimage.filters import gaussian
+from skimage.segmentation import random_walker
+from sklearn.cluster import KMeans
+from scipy import ndimage
+
 
 
 def save(image,new_image):
@@ -124,16 +128,17 @@ def RegionSegmentation(image):
 	edge_sobel = filters.sobel(image)
 	save(image, 255*edge_sobel)
  
-def WatershedSegmentation(image, threshVal):
+def WatershedSegmentation(image, threshVal, iteration, maskSize):
     new_image = np.copy(image)
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
     
     kernel = np.ones((3,3),np.uint8)
-    opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations = 2)
+    opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations = iteration)
     
-    sure_bg = cv2.dilate(opening,kernel,iterations=3)
-    dist_transform = cv2.distanceTransform(opening,cv2.DIST_L2,5)
+    sure_bg = cv2.dilate(opening,kernel,iterations=iteration)
+    
+    dist_transform = cv2.distanceTransform(opening,cv2.DIST_L2,maskSize)
     ret, sure_fg = cv2.threshold(dist_transform,threshVal*dist_transform.max(),255,0)
     sure_fg = np.uint8(sure_fg)
     unknown = cv2.subtract(sure_bg,sure_fg)
@@ -143,7 +148,6 @@ def WatershedSegmentation(image, threshVal):
     markers = cv2.watershed(image,markers)
     new_image[markers == -1] = [255,0,0]
     img2 = color.label2rgb(markers, bg_label=0)
-    #cv2.imwrite("new.jpg", 255*img2)
     save(image, 255*img2)
 
 def circle_points(resolution, center, radius):
@@ -162,12 +166,53 @@ def ActiveContour(image, resolution, center, radius):
 
 def RandomWalk(image):
     #random_walker (data,labels,beta: int=130,mode: str=str,tol: float=0.001,copy: bool=True,multichannel: bool=False,return_full_prob: bool=False,spacing: __class__=None)
-	image = rgb2gray(image)
-	s = np.linspace(0, 2*np.pi, 400)
-	r = 100 + 100*np.sin(s)
-	c = 220 + 100*np.cos(s)
-	init = np.array([r, c]).T
-	snake = active_contour(gaussian(image, 3, preserve_range=False), init, alpha=0.015, beta=10, gamma=0.001)
-	save(image, snake)
+	markers = np.zeros(image.shape, dtype=np.uint)
+	markers[image < -0.95] = 1
+	markers[image > 0.95] = 2
+
+	# Run random walker algorithm
+	labels = random_walker(image, markers, beta=10, mode='bf')
+	save(image, labels)
+
+def clusterSeg(img, cluster):
+	# For clustering the image using k-means, we first need to convert it into a 2-dimensional array
+	image_2D = img.reshape(img.shape[0]*img.shape[1], img.shape[2])
+	# tweak the cluster size and see what happens to the Output
+	kmeans = KMeans(n_clusters=cluster, random_state=0).fit(image_2D)
+	clustered = kmeans.cluster_centers_[kmeans.labels_]
+	# Reshape back the image from 2D to 3D image
+	clustered_3D = clustered.reshape(img.shape[0], img.shape[1], img.shape[2])
+	save(img, clustered_3D)
 
 
+def CircularHough(image):
+	new_image = np.copy(image)
+	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+  
+	# Blur using 3 * 3 kernel.
+	gray_blurred = cv2.blur(gray, (3, 3))
+	  
+	# Apply Hough transform on the blurred image.
+	detected_circles = cv2.HoughCircles(gray_blurred, 
+	                   cv2.HOUGH_GRADIENT, 1, 20, param1 = 50,
+	               param2 = 30, minRadius = 1, maxRadius = 40)
+	  
+	# Draw circles that are detected.
+	if detected_circles is not None:
+	  
+	    # Convert the circle parameters a, b and r to integers.
+	    detected_circles = np.uint16(np.around(detected_circles))
+	  
+	    for pt in detected_circles[0, :]:
+	        a, b, r = pt[0], pt[1], pt[2]
+	  
+	        # Draw the circumference of the circle.
+	        cv2.circle(new_image, (a, b), r, (0, 255, 0), 2)
+	  
+	        # Draw a small circle (of radius 1) to show the center.
+	        cv2.circle(new_image, (a, b), 1, (0, 0, 255), 3)
+
+	save(image, new_image)
+
+def EllipseHough(image):
+	pass

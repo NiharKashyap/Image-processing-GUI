@@ -103,3 +103,6 @@ Regular shaped object segmentstion
 
 1. Circular Hough Transformation *
 2. Elliptical Hough Transformation *
+3. Genralized Hough transform
+4. Morphological operation
+5. Add user input values

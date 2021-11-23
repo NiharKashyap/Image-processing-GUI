@@ -194,13 +194,31 @@ def paintReg():
 		ip.RegionSegmentation(frame)
 		paintImage()
 
+def paintShaped():
+	choice = st.sidebar.selectbox('Select Algorithm', ('Circular', 
+		'Ellipse'))
+	
+	if choice=='Circular':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.CircularHough(frame)
+			paintImage()
+
+	elif choice=='Ellipse':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.EllipseHough(frame)
+			paintImage()
 
 def paintWater():
 	st.title('Watershed based Segmentation')
-	thresh = st.sidebar.slider('Threshold Value', 0.0, 0.2, 1.0, help='We travel through the image with this filter by applying the desired operation.')
+	thresh = st.sidebar.slider('Threshold Value', 0.0, 1.0, 0.2, help='We travel through the image with this filter by applying the desired operation.')
+	iterations = st.sidebar.slider('Number of iterations', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
+	maskSize = st.sidebar.selectbox('Mask Size', (0, 3, 5))
+
 	frame = preProcess(uploaded_file)
 	if frame is not None:
-		ip.WatershedSegmentation(frame, thresh)
+		ip.WatershedSegmentation(frame, thresh, iterations, maskSize)
 		paintImage()
 
 
@@ -217,6 +235,11 @@ def paintRandomWalk():
 
 def paintCluster():
 	st.title('Cluster based segmentation')
+	cluster = st.sidebar.slider('Clusters', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
+	frame = preProcess(uploaded_file)
+	if frame is not None:
+		ip.clusterSeg(frame, cluster)
+		paintImage()
 
 def painter(id):
 	if id==1:
@@ -226,7 +249,7 @@ def painter(id):
 	
 	elif id==2:
 		choice = st.sidebar.selectbox('Select Segmentation Technique',
-		('Thresholding', 'Edge Detection', 'Region based Segmentation',
+		('Thresholding', 'Edge Detection', 'Region based Segmentation', 'Regular shaped object segmentation',
 		'Watershed based Segmentation', 'Active Contour model based Segmentation',
 		'Random walker segmentation', 'Cluster based segmentation'))
 
@@ -244,6 +267,8 @@ def painter(id):
 		paintEdge()
 	elif choice=='Region based Segmentation':
 		paintReg()
+	elif choice=='Regular shaped object segmentation':
+		paintShaped()
 	elif choice=='Watershed based Segmentation':
 		paintWater()
 	elif choice=='Active Contour model based Segmentation':
@@ -264,55 +289,6 @@ elif choice=='Image Segmentation':
 	painter(2)
 
 
-
-
-def ImgEnhance():
-	uploaded_file = st.file_uploader("Choose a Image file")
-	alpha = st.sidebar.slider('Contrast', 1.0, 3.0, 1.25)
-	beta = st.sidebar.slider('Bleftness', 0, 100, 25)
-	
-	Oimage, Simage = st.columns(2)
-
-	if uploaded_file is not None:
-		with open(os.path.join("tempDir",uploaded_file.name),"wb") as f: 
-			f.write(uploaded_file.getbuffer())
-		my_img = cv2.imread('tempDir/' + uploaded_file.name)
-		#my_img = Image.open(uploaded_file)
-		frame = np.array(my_img)
-		frame = cv2.resize(frame, (640, 480))
-		ip.bleftness_enhancement(frame, alpha, beta)
-		
-		imgO = Image.open('imgO.jpg')
-		imgS = Image.open('imgS.jpg')
-		Oimage.image(imgO, use_column_width=True)
-		Oimage.header("Original")
-		Simage.image(imgS, use_column_width=True)
-		Simage.header("Processed")
-
-def denoise():
-
-	uploaded_file = st.file_uploader("Choose a Image file")
-	level = st.sidebar.slider('Window size', 1, 10, 2)
-	h = st.sidebar.slider('H', 1, 20, 2)
-	hColor = st.sidebar.slider('HColor', 1, 20, 2)
-	
-	Oimage, Simage = st.columns(2)
-
-	if uploaded_file is not None:
-		with open(os.path.join("tempDir",uploaded_file.name),"wb") as f: 
-			f.write(uploaded_file.getbuffer())
-		my_img = cv2.imread('tempDir/' + uploaded_file.name)
-		frame = np.array(my_img)
-		frame = cv2.resize(frame, (640, 480))
-
-		ip.denoising(frame, level, h, hColor)
-		
-		imgO = Image.open('imgO.jpg')
-		imgS = Image.open('imgS.jpg')
-		Oimage.image(imgO, use_column_width=True)
-		Oimage.header("Original")
-		Simage.image(imgS, use_column_width=True)
-		Simage.header("Processed")
 
 
 
