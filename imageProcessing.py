@@ -118,6 +118,37 @@ def sobelEdge(image):
 	new_image = cv2.Sobel(src=image, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
 	save(image,new_image)
 
+def prewittEdge(image):
+	kernelx = np.array([[1,1,1],[0,0,0],[-1,-1,-1]])
+	kernely = np.array([[-1,0,1],[-1,0,1],[-1,0,1]])
+	img_prewittx = cv2.filter2D(image, -1, kernelx)
+	img_prewitty = cv2.filter2D(image, -1, kernely)
+	new_image = np.sqrt(pow(img_prewittx, 2.0) + pow(img_prewitty, 2.0))
+	save(image,new_image)
+
+
+def logEdge(image):
+	# Apply gaussian blur
+	blur_img = cv2.GaussianBlur(image, (5, 5), 0)
+	# Positive Laplacian Operator
+	new_image = cv2.Laplacian(blur_img, cv2.CV_64F)
+	new_image = new_image*255
+	save(image,new_image)
+
+def robertsEdge(image):
+	
+	image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+	kernelx = np.array([[1, 0], [0, -1]])
+	kernely = np.array([[0, 1], [-1, 0]])
+
+	img_robertx = cv2.filter2D(image, -1, kernelx)
+	img_roberty = cv2.filter2D(image, -1, kernely)
+	new_image = cv2.addWeighted(img_robertx, 0.5, img_roberty, 0.5, 0)
+	new_image=new_image*255
+	save(image,new_image)
+
+
 #Region based segmentation
 def RegionSegmentation(image):
     #skimage.filters.sobel(image, mask=None, *, axis=None, mode='reflect', cval=0.0)

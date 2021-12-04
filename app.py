@@ -187,6 +187,25 @@ def paintEdge():
 			ip.sobelEdge(frame)
 			paintImage()
 
+	elif choice=='Prewitt':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.prewittEdge(frame)
+			paintImage()
+
+	elif choice=='LoG':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.logEdge(frame)
+			paintImage()
+
+	elif choice=='Roberts':
+		frame = preProcess(uploaded_file)
+		if frame is not None:
+			ip.robertsEdge(frame)
+			paintImage()
+
+
 def paintReg():
 	st.title('Region based Segmentation')
 	frame = preProcess(uploaded_file)
