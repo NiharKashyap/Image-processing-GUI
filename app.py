@@ -1,7 +1,6 @@
 import cv2
 import streamlit as st
 from PIL import Image
-import selfieSeg as ss
 import imageProcessing as ip
 import numpy as np
 import os
