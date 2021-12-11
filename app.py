@@ -19,7 +19,7 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
 
 choice = st.sidebar.selectbox('Select Your Application', 
-	('Image Pre Processing', 'Image Segmentation'))
+	('Image Pre Processing', 'Image Segmentation', 'Comparision'))
 
 
 uploaded_file = st.file_uploader("Choose a Image file")
@@ -260,11 +260,23 @@ def paintCluster():
 		ip.clusterSeg(frame, cluster)
 		paintImage()
 
+def compare(choice1,choice2):
+	pass
+
 def painter(id):
 	if id==1:
 		choice = st.sidebar.selectbox('Select PreProcessing Technique',
 		('Denoising', 'Contrast Enhancement', 'Brightness Enhancement',
 		'Sharpness Enhancement'))
+
+		if choice=='Denoising':
+			paintDenoise()
+		elif choice=='Contrast Enhancement':
+			paintContrast()
+		elif choice=='Brightness Enhancement':
+			paintBrightness()
+		elif choice=='Sharpness Enhancement':
+			paintSharp()
 	
 	elif id==2:
 		choice = st.sidebar.selectbox('Select Segmentation Technique',
@@ -272,30 +284,35 @@ def painter(id):
 		'Watershed based Segmentation', 'Active Contour model based Segmentation',
 		'Random walker segmentation', 'Cluster based segmentation'))
 
-	if choice=='Denoising':
-		paintDenoise()
-	elif choice=='Contrast Enhancement':
-		paintContrast()
-	elif choice=='Brightness Enhancement':
-		paintBrightness()
-	elif choice=='Sharpness Enhancement':
-		paintSharp()
-	elif choice=='Thresholding':
-		paintThresh()
-	elif choice=='Edge Detection':
-		paintEdge()
-	elif choice=='Region based Segmentation':
-		paintReg()
-	elif choice=='Regular shaped object segmentation':
-		paintShaped()
-	elif choice=='Watershed based Segmentation':
-		paintWater()
-	elif choice=='Active Contour model based Segmentation':
-		paintActive()
-	elif choice=='Random walker segmentation':
-		paintRandomWalk()
-	elif choice=='Cluster based segmentation':
-		paintCluster()
+		if choice=='Thresholding':
+			paintThresh()
+		elif choice=='Edge Detection':
+			paintEdge()
+		elif choice=='Region based Segmentation':
+			paintReg()
+		elif choice=='Regular shaped object segmentation':
+			paintShaped()
+		elif choice=='Watershed based Segmentation':
+			paintWater()
+		elif choice=='Active Contour model based Segmentation':
+			paintActive()
+		elif choice=='Random walker segmentation':
+			paintRandomWalk()
+		elif choice=='Cluster based segmentation':
+			paintCluster()
+
+	elif id==3:
+		choice1 = st.sidebar.selectbox('Select 1st Segmentation Technique',
+		('Thresholding', 'Edge Detection', 'Region based Segmentation', 'Regular shaped object segmentation',
+		'Watershed based Segmentation', 'Active Contour model based Segmentation',
+		'Random walker segmentation', 'Cluster based segmentation'))
+
+		choice2 = st.sidebar.selectbox('Select 2nd Segmentation Technique',
+		('Thresholding', 'Edge Detection', 'Region based Segmentation', 'Regular shaped object segmentation',
+		'Watershed based Segmentation', 'Active Contour model based Segmentation',
+		'Random walker segmentation', 'Cluster based segmentation'))
+
+		compare(choice1,choice2)
 
 
 
@@ -306,6 +323,8 @@ if choice=='Image Pre Processing':
 	painter(1)
 elif choice=='Image Segmentation':
 	painter(2)
+elif choice=='Comparision':
+	painter(3)
 
 
 
