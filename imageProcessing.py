@@ -216,7 +216,7 @@ def clusterSeg(img, cluster):
 	save(img, clustered_3D)
 
 
-def CircularHough(image):
+def CircularHough(image, minDist, param1, param2, minRad, maxRad):
 	new_image = np.copy(image)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
   
@@ -225,8 +225,8 @@ def CircularHough(image):
 	  
 	# Apply Hough transform on the blurred image.
 	detected_circles = cv2.HoughCircles(gray_blurred, 
-	                   cv2.HOUGH_GRADIENT, 1, 20, param1 = 50,
-	               param2 = 30, minRadius = 1, maxRadius = 40)
+	                   cv2.HOUGH_GRADIENT, 1, minDist, param1,
+	               param2, minRad, maxRad)
 	  
 	# Draw circles that are detected.
 	if detected_circles is not None:

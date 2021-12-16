@@ -217,9 +217,15 @@ def paintShaped():
 		'Ellipse'))
 	
 	if choice=='Circular':
+		minDist = st.sidebar.slider('Minimum Distance', 0, 200, 32, help='Minimum distance between two circles.')
+		param1 = st.sidebar.slider('Param 1', 0, 200, 30, help='Minimum distance between two circles.')
+		param2 = st.sidebar.slider('Param 2', 0, 200, 30, help='Minimum distance between two circles.')
+		minRad = st.sidebar.slider('Min Radius', 0, 200, 22, help='Minimum distance between two circles.')
+		maxRad = st.sidebar.slider('Max Radius', 0, 200, 22, help='Minimum distance between two circles.')
+
 		frame = preProcess(uploaded_file)
 		if frame is not None:
-			ip.CircularHough(frame)
+			ip.CircularHough(frame, minDist, param1, param2, minRad, maxRad)
 			paintImage()
 
 	elif choice=='Ellipse':
@@ -302,14 +308,10 @@ def painter(id):
 
 	elif id==3:
 		choice1 = st.sidebar.selectbox('Select 1st Segmentation Technique',
-		('Thresholding', 'Edge Detection', 'Region based Segmentation', 'Regular shaped object segmentation',
-		'Watershed based Segmentation', 'Active Contour model based Segmentation',
-		'Random walker segmentation', 'Cluster based segmentation'))
+		('Region based Segmentation','Watershed based Segmentation',  'Cluster based segmentation'))
 
 		choice2 = st.sidebar.selectbox('Select 2nd Segmentation Technique',
-		('Thresholding', 'Edge Detection', 'Region based Segmentation', 'Regular shaped object segmentation',
-		'Watershed based Segmentation', 'Active Contour model based Segmentation',
-		'Random walker segmentation', 'Cluster based segmentation'))
+		('Region based Segmentation','Watershed based Segmentation', 'Cluster based segmentation'))
 
 		compare(choice1,choice2)
 
