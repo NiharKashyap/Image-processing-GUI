@@ -15,6 +15,10 @@ def save(image,new_image):
 	cv2.imwrite('imgO.jpg', image)
 	cv2.imwrite('imgS.jpg', new_image)
 
+
+def saveComp(image, flag):
+	cv2.imwrite( str(flag) + '.jpg', image)
+
 '''
 def saveSegmented(image, new_image):
     cv2.imwrite('imgO.jpg', image)
@@ -150,16 +154,20 @@ def robertsEdge(image):
 
 
 #Region based segmentation
-def RegionSegmentation(image):
+def RegionSegmentation(image, flag):
     #skimage.filters.sobel(image, mask=None, *, axis=None, mode='reflect', cval=0.0)
 	#image = cv2.imread('tempDir/' + image)
 	#image = np.array(image)
 	#image = cv2.resize(image, (640, 480))
 	#image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	edge_sobel = filters.sobel(image)
-	save(image, 255*edge_sobel)
- 
-def WatershedSegmentation(image, threshVal, iteration, maskSize):
+	if flag==0:
+		save(image, 255*edge_sobel)
+	else:
+		saveComp(255*edge_sobel, flag)
+
+
+def WatershedSegmentation(image, threshVal, iteration, maskSize, flag):
     new_image = np.copy(image)
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
     ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
@@ -179,7 +187,11 @@ def WatershedSegmentation(image, threshVal, iteration, maskSize):
     markers = cv2.watershed(image,markers)
     new_image[markers == -1] = [255,0,0]
     img2 = color.label2rgb(markers, bg_label=0)
-    save(image, 255*img2)
+
+    if flag==0:
+    	save(image, 255*img2)
+    else:
+    	saveComp(255*img2, flag)
 
 def circle_points(resolution, center, radius):
     """
@@ -205,7 +217,7 @@ def RandomWalk(image):
 	labels = random_walker(image, markers, beta=10, mode='bf')
 	save(image, labels)
 
-def clusterSeg(img, cluster):
+def clusterSeg(img, cluster, flag):
 	# For clustering the image using k-means, we first need to convert it into a 2-dimensional array
 	image_2D = img.reshape(img.shape[0]*img.shape[1], img.shape[2])
 	# tweak the cluster size and see what happens to the Output
@@ -213,7 +225,12 @@ def clusterSeg(img, cluster):
 	clustered = kmeans.cluster_centers_[kmeans.labels_]
 	# Reshape back the image from 2D to 3D image
 	clustered_3D = clustered.reshape(img.shape[0], img.shape[1], img.shape[2])
-	save(img, clustered_3D)
+	
+
+	if flag==0:
+		save(img, clustered_3D)
+	else:
+		saveComp(clustered_3D, flag)
 
 
 def CircularHough(image, minDist, param1, param2, minRad, maxRad):

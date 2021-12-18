@@ -57,6 +57,15 @@ def paintImage():
              mime="image/png"
            )
 
+def paintImageComp(flag):
+	
+	imgO = Image.open(str(flag)+'.jpg')
+
+	if flag==1:
+		Oimage.image(imgO)
+	elif flag==2:
+		Simage.image(imgO)
+
 
 def paintDenoise():
 	choice = st.sidebar.selectbox('Select Algorithm', ('Image Blur', 'Gaussian Filter',
@@ -209,8 +218,10 @@ def paintReg():
 	st.title('Region based Segmentation')
 	frame = preProcess(uploaded_file)
 	if frame is not None:
-		ip.RegionSegmentation(frame)
+		ip.RegionSegmentation(frame, 0)
 		paintImage()
+
+
 
 def paintShaped():
 	choice = st.sidebar.selectbox('Select Algorithm', ('Circular', 
@@ -246,6 +257,7 @@ def paintWater():
 		paintImage()
 
 
+
 def paintActive():
 	st.title('Active Contour model based Segmentation')
 
@@ -264,6 +276,32 @@ def paintCluster():
 	if frame is not None:
 		ip.clusterSeg(frame, cluster)
 		paintImage()
+
+def paintClusterComp(flag):
+	cluster = st.sidebar.slider('Clusters', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
+	frame = preProcess(uploaded_file)
+	if frame is not None:
+		ip.clusterSeg(frame, cluster, flag)
+		paintImageComp(flag)
+
+def paintWaterComp(flag):
+	
+	thresh = st.sidebar.slider('Threshold Value', 0.0, 1.0, 0.2, help='We travel through the image with this filter by applying the desired operation.')
+	iterations = st.sidebar.slider('Number of iterations', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
+	maskSize = st.sidebar.selectbox('Mask Size', (0, 3, 5))
+
+	frame = preProcess(uploaded_file)
+	if frame is not None:
+		ip.WatershedSegmentation(frame, thresh, iterations, maskSize, flag)
+		paintImageComp(flag)
+
+
+def paintRegComp(flag):
+	
+	frame = preProcess(uploaded_file)
+	if frame is not None:
+		ip.RegionSegmentation(frame, flag)
+		paintImageComp(flag)
 
 def compare(choice1,choice2):
 	pass
@@ -310,8 +348,24 @@ def painter(id):
 		choice1 = st.sidebar.selectbox('Select 1st Segmentation Technique',
 		('Region based Segmentation','Watershed based Segmentation',  'Cluster based segmentation'))
 
+		if choice1=='Region based Segmentation':
+			paintRegComp(1)
+		elif choice1=='Watershed based Segmentation':
+			paintWaterComp(1)
+		elif choice1=='Cluster based segmentation':
+			paintClusterComp(1)
+
+
+
 		choice2 = st.sidebar.selectbox('Select 2nd Segmentation Technique',
 		('Region based Segmentation','Watershed based Segmentation', 'Cluster based segmentation'))
+
+		if choice2=='Region based Segmentation':
+			paintRegComp(2)
+		elif choice2=='Watershed based Segmentation':
+			paintWaterComp(2)
+		elif choice2=='Cluster based segmentation':
+			paintClusterComp(2)
 
 		compare(choice1,choice2)
 
