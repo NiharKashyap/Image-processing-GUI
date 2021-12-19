@@ -229,8 +229,8 @@ def paintShaped():
 	
 	if choice=='Circular':
 		minDist = st.sidebar.slider('Minimum Distance', 0, 200, 32, help='Minimum distance between two circles.')
-		param1 = st.sidebar.slider('Param 1', 0, 200, 30, help='Minimum distance between two circles.')
-		param2 = st.sidebar.slider('Param 2', 0, 200, 30, help='Minimum distance between two circles.')
+		param1 = st.sidebar.slider('Param 1', 0.0, 1.0, 0.3, help='Minimum distance between two circles.')
+		param2 = st.sidebar.slider('Param 2', 0.0, 1.0, 0.3, help='Minimum distance between two circles.')
 		minRad = st.sidebar.slider('Min Radius', 0, 200, 22, help='Minimum distance between two circles.')
 		maxRad = st.sidebar.slider('Max Radius', 0, 200, 22, help='Minimum distance between two circles.')
 
@@ -253,7 +253,7 @@ def paintWater():
 
 	frame = preProcess(uploaded_file)
 	if frame is not None:
-		ip.WatershedSegmentation(frame, thresh, iterations, maskSize)
+		ip.WatershedSegmentation(frame, thresh, iterations, maskSize, 0)
 		paintImage()
 
 
@@ -274,7 +274,7 @@ def paintCluster():
 	cluster = st.sidebar.slider('Clusters', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
 	frame = preProcess(uploaded_file)
 	if frame is not None:
-		ip.clusterSeg(frame, cluster)
+		ip.clusterSeg(frame, cluster, 0)
 		paintImage()
 
 def paintClusterComp(flag):

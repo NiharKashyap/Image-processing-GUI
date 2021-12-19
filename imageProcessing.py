@@ -8,7 +8,10 @@ from skimage.filters import gaussian
 from skimage.segmentation import random_walker
 from sklearn.cluster import KMeans
 from scipy import ndimage
+from skimage import color, draw
 
+from skimage import io, draw, filters, feature, transform, img_as_ubyte
+import matplotlib.pyplot as plt
 
 
 def save(image,new_image):
@@ -19,11 +22,6 @@ def save(image,new_image):
 def saveComp(image, flag):
 	cv2.imwrite( str(flag) + '.jpg', image)
 
-'''
-def saveSegmented(image, new_image):
-    cv2.imwrite('imgO.jpg', image)
-    cv2.imwrite('imgS.jpg', 255*new_image)
-'''
 
 def sharpen(image):
 	# Create our shapening kernel, it must equal to one eventually
@@ -233,34 +231,25 @@ def clusterSeg(img, cluster, flag):
 		saveComp(clustered_3D, flag)
 
 
-def CircularHough(image, minDist, param1, param2, minRad, maxRad):
+def CircularHough(image, sig, low_thresh, high_thresh, minRad, maxRad):
 	new_image = np.copy(image)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-  
-	# Blur using 3 * 3 kernel.
-	gray_blurred = cv2.blur(gray, (3, 3))
-	  
-	# Apply Hough transform on the blurred image.
-	detected_circles = cv2.HoughCircles(gray_blurred, 
-	                   cv2.HOUGH_GRADIENT, 1, minDist, param1,
-	               param2, minRad, maxRad)
-	  
-	# Draw circles that are detected.
-	if detected_circles is not None:
-	  
-	    # Convert the circle parameters a, b and r to integers.
-	    detected_circles = np.uint16(np.around(detected_circles))
-	  
-	    for pt in detected_circles[0, :]:
-	        a, b, r = pt[0], pt[1], pt[2]
-	  
-	        # Draw the circumference of the circle.
-	        cv2.circle(new_image, (a, b), r, (0, 255, 0), 2)
-	  
-	        # Draw a small circle (of radius 1) to show the center.
-	        cv2.circle(new_image, (a, b), 1, (0, 0, 255), 3)
 
-	save(image, new_image)
+
+	img = img_as_ubyte(gray)
+
+	edges = feature.canny(img, sigma=sig, low_threshold=low_thresh, high_threshold=high_thresh)
+	radii = np.arange(minRad, maxRad, 1)
+	result = transform.hough_circle(edges, radii)
+	accums, cx, cy, radii = transform.hough_circle_peaks(result, radii,
+                                           total_num_peaks=1)
+	image = color.gray2rgb(img)
+	for center_y, center_x, radius in zip(cy, cx, radii):
+		circy, circx = draw.circle_perimeter(center_y, center_x, radius, shape=image.shape)
+		image[circy, circx] = (220, 20, 20)
+
+	save(new_image, image)
+
 
 def EllipseHough(image):
 	pass
