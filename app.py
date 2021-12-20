@@ -114,8 +114,9 @@ def paintDenoise():
 
 
 def paintContrast():
+	#Removing Min Max COntrast STretrching for now
 	choice = st.sidebar.selectbox('Select Algorithm', ('Histogram Equilization', 
-		'CLAHE', 'Min-Max Contrast Stretching'))
+		'CLAHE'))
 
 	if choice=='Histogram Equilization':
 		frame = preProcess(uploaded_file)
@@ -149,9 +150,9 @@ def paintSharp():
 
 
 def paintThresh():
-	
+	#Removing Local for now
 	choice = st.sidebar.selectbox('Select Algorithm', ('Global', 
-		'Local', 'Adaptive', 'Otsu'))
+		 'Adaptive', 'Otsu'))
 
 	if choice=='Global':
 		thresh = st.sidebar.slider('Threshold Value', 0, 100, 127, help='We travel through the image with this filter by applying the desired operation.')
@@ -224,8 +225,9 @@ def paintReg():
 
 
 def paintShaped():
+	#Removing Ellipse
 	choice = st.sidebar.selectbox('Select Algorithm', ('Circular', 
-		'Ellipse'))
+		))
 	
 	if choice=='Circular':
 		minDist = st.sidebar.slider('Minimum Distance', 0, 200, 32, help='Minimum distance between two circles.')
@@ -322,10 +324,10 @@ def painter(id):
 			paintSharp()
 	
 	elif id==2:
+		#Removed Active COntour and Random Walker
 		choice = st.sidebar.selectbox('Select Segmentation Technique',
 		('Thresholding', 'Edge Detection', 'Region based Segmentation', 'Regular shaped object segmentation',
-		'Watershed based Segmentation', 'Active Contour model based Segmentation',
-		'Random walker segmentation', 'Cluster based segmentation'))
+		'Watershed based Segmentation','Cluster based segmentation'))
 
 		if choice=='Thresholding':
 			paintThresh()
