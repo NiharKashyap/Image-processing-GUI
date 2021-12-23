@@ -74,8 +74,8 @@ def equi_hist(image):
 	new_image = cv2.merge((output1_R, output1_G, output1_B))
 	save(image,new_image)
 
-def clahe(image, clipLim):
-	clahe=cv2.createCLAHE(clipLim)
+def clahe(image, clipLim, tileGridSize):
+	clahe=cv2.createCLAHE(clipLim, (tileGridSize,tileGridSize))
 	R, G, B = cv2.split(image)
 
 	output1_R = clahe.apply(R)
@@ -235,15 +235,14 @@ def CircularHough(image, sig, low_thresh, high_thresh, minRad, maxRad):
 	new_image = np.copy(image)
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-
 	img = img_as_ubyte(gray)
 
 	edges = feature.canny(img, sigma=sig, low_threshold=low_thresh, high_threshold=high_thresh)
 	radii = np.arange(minRad, maxRad, 1)
 	result = transform.hough_circle(edges, radii)
 	accums, cx, cy, radii = transform.hough_circle_peaks(result, radii,
-                                           total_num_peaks=1)
-	image = color.gray2rgb(img)
+                                           total_num_peaks=2)
+	#image = color.gray2rgb(img)
 	for center_y, center_x, radius in zip(cy, cx, radii):
 		circy, circx = draw.circle_perimeter(center_y, center_x, radius, shape=image.shape)
 		image[circy, circx] = (220, 20, 20)

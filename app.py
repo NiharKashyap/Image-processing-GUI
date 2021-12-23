@@ -94,9 +94,9 @@ def paintDenoise():
 			paintImage()
 
 	elif choice=='Bilateral Filter':
-		d = st.sidebar.slider('Kernel Size', 0, 20, 6, help='We travel through the image with this filter by applying the desired operation.')
-		sigmaColor = st.sidebar.slider('Sigma Color', 0, 100, 75)
-		sigmaSpace = st.sidebar.slider('Sigma Space', 0, 100, 75)
+		d = st.sidebar.slider('Kernel Size', 0, 20, 6, help='Diameter of each pixel neighborhood.')
+		sigmaColor = st.sidebar.slider('Sigma Color', 0, 100, 75, help='The greater the value, the colors farther to each other will start to get mixed')
+		sigmaSpace = st.sidebar.slider('Sigma Space', 0, 100, 75, help='The greater its value, the more further pixels will mix together, given that their colors lie within the sigmaColor range')
 
 		frame = preProcess(uploaded_file)
 		if frame is not None:
@@ -105,9 +105,9 @@ def paintDenoise():
 
 
 	elif choice=='Non Local Means':
-		level = st.sidebar.slider('Window size', 1, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
-		h = st.sidebar.slider('H', 1, 20, 2)
-		hColor = st.sidebar.slider('HColor', 1, 20, 2)
+		level = st.sidebar.slider('Window size', 1, 10, 2, help='Size in pixels of the template patch.')
+		h = st.sidebar.slider('H', 1, 20, 2, help='parameter deciding filter strength. Higher h value removes noise better, but removes details of image also')
+		hColor = st.sidebar.slider('HColor', 1, 20, 2, help='same as h, but for color images only')
 		frame = preProcess(uploaded_file)
 		ip.denoising(frame, level, h, hColor)
 		paintImage()
@@ -125,10 +125,11 @@ def paintContrast():
 			paintImage()
 		
 	elif choice=='CLAHE':
-		clipLim = st.sidebar.slider('Clip Size', 1,100,15)
+		clipLim = st.sidebar.slider('Clip Size', 1,100,15, help='Limits the amplification by clipping the histogram at a predefined value')
+		tileGridSize=st.sidebar.slider('Tile Grid Size', 1,10,8, help='Image is divided into small blocks called tiles')
 		frame = preProcess(uploaded_file)
 		if frame is not None:
-			ip.clahe(frame, clipLim)
+			ip.clahe(frame, clipLim, tileGridSize)
 			paintImage()
 
 def paintBrightness():
@@ -155,8 +156,8 @@ def paintThresh():
 		 'Adaptive', 'Otsu'))
 
 	if choice=='Global':
-		thresh = st.sidebar.slider('Threshold Value', 0, 100, 127, help='We travel through the image with this filter by applying the desired operation.')
-		maxVal = st.sidebar.slider('Max Value', 0, 100, 127, help='We travel through the image with this filter by applying the desired operation.')
+		thresh = st.sidebar.slider('Threshold Value', 0, 100, 127)
+		maxVal = st.sidebar.slider('Max Value', 0, 100, 127, help='Maximum value to be used with THRESH_BINARY ')
 		
 		frame = preProcess(uploaded_file)
 		if frame is not None:
@@ -164,7 +165,7 @@ def paintThresh():
 			paintImage()
 
 	elif choice=='Adaptive':
-		maxVal = st.sidebar.slider('Max Value', 0, 100, 127, help='We travel through the image with this filter by applying the desired operation.')
+		maxVal = st.sidebar.slider('Max Value', 0, 100, 127, help='maximum value to be used with THRESH_BINARY')
 		
 		frame = preProcess(uploaded_file)
 		if frame is not None:
@@ -231,10 +232,12 @@ def paintShaped():
 	
 	if choice=='Circular':
 		minDist = st.sidebar.slider('Minimum Distance', 0, 200, 32, help='Minimum distance between two circles.')
-		param1 = st.sidebar.slider('Param 1', 0.0, 1.0, 0.3, help='Minimum distance between two circles.')
-		param2 = st.sidebar.slider('Param 2', 0.0, 1.0, 0.3, help='Minimum distance between two circles.')
+		#param1 = st.sidebar.slider('Param 1', 0.0, 1.0, 0.3, help='Minimum distance between two circles.')
+		#param2 = st.sidebar.slider('Param 2', 0.0, 1.0, 0.3, help='Minimum distance between two circles.')
+		param1=0.3
+		param2=0.3
 		minRad = st.sidebar.slider('Min Radius', 0, 200, 22, help='Minimum distance between two circles.')
-		maxRad = st.sidebar.slider('Max Radius', 0, 200, 22, help='Minimum distance between two circles.')
+		maxRad = st.sidebar.slider('Max Radius', 0, 200, 22, help='Maximum distance between two circles.')
 
 		frame = preProcess(uploaded_file)
 		if frame is not None:
@@ -249,9 +252,9 @@ def paintShaped():
 
 def paintWater():
 	st.title('Watershed based Segmentation')
-	thresh = st.sidebar.slider('Threshold Value', 0.0, 1.0, 0.2, help='We travel through the image with this filter by applying the desired operation.')
-	iterations = st.sidebar.slider('Number of iterations', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
-	maskSize = st.sidebar.selectbox('Mask Size', (0, 3, 5))
+	thresh = st.sidebar.slider('Threshold Value', 0.0, 1.0, 0.2)
+	iterations = st.sidebar.slider('Number of iterations', 0, 10, 2)
+	maskSize = st.sidebar.selectbox('Mask Size', (0, 3, 5), help='Size of mask')
 
 	frame = preProcess(uploaded_file)
 	if frame is not None:
@@ -273,14 +276,14 @@ def paintRandomWalk():
 
 def paintCluster():
 	st.title('Cluster based segmentation')
-	cluster = st.sidebar.slider('Clusters', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
+	cluster = st.sidebar.slider('Clusters', 0, 10, 2, help='Number of clusters.')
 	frame = preProcess(uploaded_file)
 	if frame is not None:
 		ip.clusterSeg(frame, cluster, 0)
 		paintImage()
 
 def paintClusterComp(flag):
-	cluster = st.sidebar.slider('Clusters', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
+	cluster = st.sidebar.slider('Clusters', 0, 10, 2, help='Number of clusters.')
 	frame = preProcess(uploaded_file)
 	if frame is not None:
 		ip.clusterSeg(frame, cluster, flag)
@@ -288,9 +291,9 @@ def paintClusterComp(flag):
 
 def paintWaterComp(flag):
 	
-	thresh = st.sidebar.slider('Threshold Value', 0.0, 1.0, 0.2, help='We travel through the image with this filter by applying the desired operation.')
-	iterations = st.sidebar.slider('Number of iterations', 0, 10, 2, help='We travel through the image with this filter by applying the desired operation.')
-	maskSize = st.sidebar.selectbox('Mask Size', (0, 3, 5))
+	thresh = st.sidebar.slider('Threshold Value', 0.0, 1.0, 0.2)
+	iterations = st.sidebar.slider('Number of iterations', 0, 10, 2)
+	maskSize = st.sidebar.selectbox('Mask Size', (0, 3, 5), help='Size of mask')
 
 	frame = preProcess(uploaded_file)
 	if frame is not None:
